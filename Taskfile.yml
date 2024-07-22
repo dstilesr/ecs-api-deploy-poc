@@ -1,0 +1,56 @@
+version: 3
+tasks:
+  terraform-init:
+    desc: Initialize Terraform.
+    dir: infrastructure
+    sources:
+      - main.tf
+    cmds:
+      - terraform init
+
+  package-layer:
+    desc: Make Zip file containing the libraries the function will use.
+    sources:
+      - requirements.txt
+    generates:
+      - layer-src.zip
+    cmds:
+      - rm -f layer-src.zip
+      - mkdir -p layer-src/python/lib/python3.9/site-packages/
+      - pip install -r requirements.txt --target layer-src/python/lib/python3.9/site-packages/ --no-cache-dir
+      - |
+        cd layer-src \
+          && zip ../layer-src.zip -r . \
+          && cd .. \
+          && rm -r layer-src
+
+  package-lambda:
+    desc: Package lambda zip file for deployment.
+    deps:
+      - package-layer
+    sources:
+      - src/**/*.py
+    cmds:
+      - rm -f lambda-src.zip
+      - cp -R src lambda-src
+      - |
+        cd lambda-src \
+            && zip ../lambda-src.zip -r . \
+            && cd .. \
+            && rm -r lambda-src
+
+  deploy:
+    desc: Deploy the function to AWS Lambda + API Gateway.
+    dir: infrastructure
+    deps:
+      - terraform-init
+      - package-lambda
+    cmds:
+      - terraform validate
+      - terraform apply -auto-approve -input=false
+
+  take-down:
+    desc: Take down the infrastructure from AWS.
+    dir: infrastructure
+    cmds:
+      - terraform destroy -auto-approve -input=false
