@@ -4,53 +4,41 @@ tasks:
     desc: Initialize Terraform.
     dir: infrastructure
     sources:
-      - main.tf
+      - "**/main.tf"
     cmds:
-      - terraform init
+      - cd ecr && terraform init && cd ..
+      - cd service && terraform init && cd ..
 
-  package-layer:
-    desc: Make Zip file containing the libraries the function will use.
-    sources:
-      - requirements.txt
-    generates:
-      - layer-src.zip
-    cmds:
-      - rm -f layer-src.zip
-      - mkdir -p layer-src/python/lib/python3.9/site-packages/
-      - pip install -r requirements.txt --target layer-src/python/lib/python3.9/site-packages/ --no-cache-dir
-      - |
-        cd layer-src \
-          && zip ../layer-src.zip -r . \
-          && cd .. \
-          && rm -r layer-src
-
-  package-lambda:
-    desc: Package lambda zip file for deployment.
-    deps:
-      - package-layer
-    sources:
-      - src/**/*.py
-    cmds:
-      - rm -f lambda-src.zip
-      - cp -R src lambda-src
-      - |
-        cd lambda-src \
-            && zip ../lambda-src.zip -r . \
-            && cd .. \
-            && rm -r lambda-src
-
-  deploy:
-    desc: Deploy the function to AWS Lambda + API Gateway.
-    dir: infrastructure
+  deploy-ecr:
+    desc: Deploy the ECR to store docker images.
+    dir: infrastructure/ecr
     deps:
       - terraform-init
-      - package-lambda
     cmds:
       - terraform validate
       - terraform apply -auto-approve -input=false
+
+  deploy-service:
+    desc: Deploy the service to ECS.
+    dir: infrastructure/ecr
+    deps:
+      - terraform-init
+    cmds:
+      - terraform validate
+      - terraform apply -auto-approve -input=false
+
+  deploy:
+    desc: Deploy the function to AWS.
+    dir: infrastructure
+    deps:
+      - terraform-init
+    cmds:
+      - task: deploy-ecr
+      - task: deploy-service
 
   take-down:
     desc: Take down the infrastructure from AWS.
     dir: infrastructure
     cmds:
-      - terraform destroy -auto-approve -input=false
+      - cd ecr && terraform destroy -auto-approve -input=false && cd ..
+      - cd service && terraform destroy -auto-approve -input=false && cd ..
