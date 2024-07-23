@@ -169,6 +169,7 @@ layer-src/
 **/.terraform/
 **/.terraform.lock.hcl
 **/terraform.tfstate*
+**/*.tfvars
 
 # Task
 **/.task/
