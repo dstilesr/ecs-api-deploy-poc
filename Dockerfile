@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 WORKDIR /app
-EXPOSE 3000
+EXPOSE 80
 
 COPY requirements.txt ./
 RUN pip install --upgrade --no-cache-dir pip \
@@ -9,4 +9,4 @@ RUN pip install --upgrade --no-cache-dir pip \
 
 COPY src ./
 
-CMD ["uvicorn", "main:app", "--port", "3000", "--host", "0.0.0.0"]
+CMD ["uvicorn", "main:app", "--port", "80", "--host", "0.0.0.0"]
