@@ -20,7 +20,7 @@ tasks:
 
   deploy-service:
     desc: Deploy the service to ECS.
-    dir: infrastructure/ecr
+    dir: infrastructure/service
     deps:
       - terraform-init
     cmds:
@@ -42,3 +42,12 @@ tasks:
     cmds:
       - cd ecr && terraform destroy -auto-approve -input=false && cd ..
       - cd service && terraform destroy -auto-approve -input=false && cd ..
+
+  load-img-to-ecr:
+    dotenv:
+      - ".env"
+    cmds:
+      - aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_URI
+      - docker build -t ecs-api-test-repository .
+      - docker tag ecs-api-test-repository:latest $ECR_URI/ecs-api-test-repository:latest
+      - docker push $ECR_URI/ecs-api-test-repository:latest

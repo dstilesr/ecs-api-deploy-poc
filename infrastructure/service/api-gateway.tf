@@ -1,4 +1,4 @@
-
+/**
 resource "aws_api_gateway_rest_api" "api" {
   name        = "ECS Example API"
   description = "Example API to try ECS + FastAPI!"
@@ -56,14 +56,4 @@ resource "aws_api_gateway_stage" "deploy_stage" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   stage_name    = var.stage_name
 }
-
-#################################################
-# Invoke Permission
-#################################################
-resource "aws_lambda_permission" "api_gw_invoke" {
-  count         = length(local.http_methods)
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.mangum_func.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/${local.http_methods[count.index]}/*"
-}
+*/
