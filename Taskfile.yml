@@ -28,6 +28,7 @@ tasks:
       - terraform apply -auto-approve -input=false
 
   load-img-to-ecr:
+    desc: Load the image to ECR.
     dotenv:
       - ".env"
     cmds:
