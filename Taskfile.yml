@@ -27,22 +27,6 @@ tasks:
       - terraform validate
       - terraform apply -auto-approve -input=false
 
-  deploy:
-    desc: Deploy the function to AWS.
-    dir: infrastructure
-    deps:
-      - terraform-init
-    cmds:
-      - task: deploy-ecr
-      - task: deploy-service
-
-  take-down:
-    desc: Take down the infrastructure from AWS.
-    dir: infrastructure
-    cmds:
-      - cd ecr && terraform destroy -auto-approve -input=false && cd ..
-      - cd service && terraform destroy -auto-approve -input=false && cd ..
-
   load-img-to-ecr:
     dotenv:
       - ".env"
@@ -51,3 +35,20 @@ tasks:
       - docker build -t ecs-api-test-repository .
       - docker tag ecs-api-test-repository:latest $ECR_URI/ecs-api-test-repository:latest
       - docker push $ECR_URI/ecs-api-test-repository:latest
+
+  deploy:
+    desc: Deploy the function to AWS.
+    dir: infrastructure
+    deps:
+      - terraform-init
+    cmds:
+      - task: deploy-ecr
+      - task: load-img-to-ecr
+      - task: deploy-service
+
+  take-down:
+    desc: Take down the infrastructure from AWS.
+    dir: infrastructure
+    cmds:
+      - cd service && terraform destroy -auto-approve -input=false && cd ..
+      - cd ecr && terraform destroy -auto-approve -input=false && cd ..

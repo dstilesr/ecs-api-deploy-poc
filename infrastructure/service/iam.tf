@@ -21,19 +21,19 @@ resource "aws_iam_policy" "task_exec" {
   name        = "task-execution-policy"
   description = "Allows task execution for ECS"
   policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        Effect = "Allow"
-        Action = [
+        "Effect" : "Allow",
+        "Action" : [
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage",
           "logs:CreateLogStream",
-          "logs:PutLogEvents",
-        ]
-        Resource = "*"
+          "logs:PutLogEvents"
+        ],
+        "Resource" : "*"
       }
     ]
   })
