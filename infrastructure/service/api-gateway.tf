@@ -1,4 +1,4 @@
-/**
+
 resource "aws_api_gateway_rest_api" "api" {
   name        = "ECS Example API"
   description = "Example API to try ECS + FastAPI!"
@@ -16,20 +16,27 @@ resource "aws_api_gateway_resource" "api_resource" {
 resource "aws_api_gateway_method" "api" {
   resource_id      = aws_api_gateway_resource.api_resource.id
   rest_api_id      = aws_api_gateway_rest_api.api.id
-  http_method      = "ALL"
+  http_method      = "ANY"
   authorization    = "NONE"
-  api_key_required = true
+  api_key_required = false
+}
+
+resource "aws_api_gateway_vpc_link" "lb_link" {
+  name        = "ecs-example-link"
+  description = "Link AWS API Gateway to load balancer"
+  target_arns = [aws_lb.alb.arn]
 }
 
 resource "aws_api_gateway_integration" "api_integration" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = aws_api_gateway_resource.api_resource.id
-  http_method             = aws_api_gateway_method.api[count.index].http_method
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.mangum_func.invoke_arn
+  http_method             = aws_api_gateway_method.api.http_method
+  integration_http_method = "ANY"
+  type                    = "HTTP_PROXY"
+  uri                     = "http://${aws_lb.alb.dns_name}"
+  connection_type         = "VPC_LINK"
+  connection_id           = aws_api_gateway_vpc_link.lb_link.id
 }
-
 
 #################################################
 # Deployment + Stage
@@ -56,4 +63,3 @@ resource "aws_api_gateway_stage" "deploy_stage" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   stage_name    = var.stage_name
 }
-*/
