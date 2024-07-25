@@ -49,9 +49,21 @@ tasks:
       - task: load-img-to-ecr
       - task: deploy-service
 
+  take-down-service:
+    desc: Take down the service infrastructure from AWS.
+    dir: infrastructure/service
+    cmds:
+      - terraform destroy -auto-approve -input=false
+
+  take-down-ecr:
+    desc: Take down the ECR infrastructure from AWS.
+    dir: infrastructure/ecr
+    cmds:
+      - terraform destroy -auto-approve -input=false
+
   take-down:
     desc: Take down the infrastructure from AWS.
     dir: infrastructure
     cmds:
-      - cd service && terraform destroy -auto-approve -input=false && cd ..
-      - cd ecr && terraform destroy -auto-approve -input=false && cd ..
+      - task: take-down-service
+      - task: take-down-ecr
