@@ -19,6 +19,10 @@ resource "aws_api_gateway_method" "api" {
   http_method      = "ANY"
   authorization    = "NONE"
   api_key_required = false
+
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
 }
 
 resource "aws_api_gateway_vpc_link" "lb_link" {
@@ -33,9 +37,13 @@ resource "aws_api_gateway_integration" "api_integration" {
   http_method             = aws_api_gateway_method.api.http_method
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://${aws_lb.alb.dns_name}:80"
+  uri                     = "http://${aws_lb.alb.dns_name}:80/{proxy}"
   connection_type         = "VPC_LINK"
   connection_id           = aws_api_gateway_vpc_link.lb_link.id
+
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+  }
 }
 
 #################################################

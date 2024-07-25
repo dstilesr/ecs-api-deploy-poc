@@ -11,6 +11,11 @@ resource "aws_ecs_task_definition" "task" {
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   execution_role_arn       = aws_iam_role.task_exec_role.arn
+
+  runtime_platform {
+    cpu_architecture        = "ARM64"
+    operating_system_family = "LINUX"
+  }
 }
 
 resource "aws_ecs_service" "task" {
@@ -20,7 +25,7 @@ resource "aws_ecs_service" "task" {
   desired_count   = 1
 
   capacity_provider_strategy {
-    capacity_provider = "FARGATE_SPOT"
+    capacity_provider = "FARGATE"
     base              = 1
     weight            = 100
   }

@@ -13,4 +13,4 @@ app = FastAPI(
     redoc_url=None
 )
 
-app.include_router(router, prefix=stage_pref + "/api")
+app.include_router(router, prefix="/api")
