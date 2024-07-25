@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "task" {
   execution_role_arn       = aws_iam_role.task_exec_role.arn
 
   runtime_platform {
-    cpu_architecture        = "ARM64"
+    cpu_architecture        = var.cpu_arch
     operating_system_family = "LINUX"
   }
 }
@@ -25,7 +25,7 @@ resource "aws_ecs_service" "task" {
   desired_count   = 1
 
   capacity_provider_strategy {
-    capacity_provider = "FARGATE"
+    capacity_provider = var.capacity_provider
     base              = 1
     weight            = 100
   }

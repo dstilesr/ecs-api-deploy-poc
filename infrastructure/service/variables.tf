@@ -30,3 +30,15 @@ variable "subnet_ids" {
   type        = list(string)
   description = "Subnets in which to deploy the service."
 }
+
+variable "capacity_provider" {
+  description = "Capacity provider for ECS service."
+  type        = string
+  default     = "FARGATE_SPOT"
+}
+
+variable "cpu_arch" {
+  description = "CPU architecture for ECS service."
+  type        = string
+  default     = "X86_64"
+}
