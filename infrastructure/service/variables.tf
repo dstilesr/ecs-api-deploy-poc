@@ -26,6 +26,12 @@ variable "vpc_id" {
   description = "ID of VPC to deploy in."
 }
 
+variable "port" {
+  type        = number
+  description = "Port on which the service will listen."
+  default     = 80
+}
+
 variable "subnet_ids" {
   type        = list(string)
   description = "Subnets in which to deploy the service."
