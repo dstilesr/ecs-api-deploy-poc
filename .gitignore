@@ -175,3 +175,6 @@ layer-src/
 **/.task/
 
 Tests.ipynb
+
+# UV
+.python-version
