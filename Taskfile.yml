@@ -31,6 +31,8 @@ tasks:
     desc: Load the image to ECR.
     sources:
       - src/**/*.py
+      - pyproject.toml
+      - uv.lock
     dotenv:
       - ".env"
     cmds:
