@@ -69,5 +69,5 @@ resource "aws_api_gateway_deployment" "lambda_deploy" {
 resource "aws_api_gateway_stage" "deploy_stage" {
   deployment_id = aws_api_gateway_deployment.lambda_deploy.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  stage_name    = var.stage_name
+  stage_name    = var.environment
 }

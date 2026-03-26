@@ -15,5 +15,5 @@ output "task_definition_arn" {
 }
 
 output "api_gw_url" {
-  value = aws_api_gateway_deployment.lambda_deploy.invoke_url
+  value = aws_api_gateway_stage.deploy_stage.invoke_url
 }

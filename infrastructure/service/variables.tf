@@ -1,3 +1,21 @@
+variable "project" {
+  type        = string
+  description = "Name of the project the application belongs to"
+  default     = "experiment"
+}
+
+variable "environment" {
+  type        = string
+  description = "Deployment environment"
+  default     = "dev"
+}
+
+variable "region" {
+  type        = string
+  default     = "us-west-2"
+  description = "AWSregion to deploy in"
+}
+
 variable "task_memory" {
   type        = number
   description = "Memory to assign to ECS task."
@@ -13,12 +31,6 @@ variable "task_cpu" {
 variable "ecr_url" {
   type        = string
   description = "URL of ECR repository where image is stored."
-}
-
-variable "stage_name" {
-  type        = string
-  description = "Name of deployment stage."
-  default     = "dev"
 }
 
 variable "vpc_id" {

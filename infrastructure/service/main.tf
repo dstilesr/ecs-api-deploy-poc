@@ -1,18 +1,20 @@
 terraform {
-  required_version = "~>1.0"
+  required_version = "~> 1.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~>5.0"
+      version = "~> 6.0"
     }
   }
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = var.region
   default_tags {
     tags = {
-      Project = "ECS API Test Deployment"
+      Project = var.project
+      ManagedBy = "Terraform"
+      environment = var.environment
     }
   }
 }

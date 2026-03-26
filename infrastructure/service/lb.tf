@@ -1,6 +1,6 @@
 
 resource "aws_lb" "alb" {
-  name                       = "test-lb"
+  name                       = "${var.project}-lb-${var.environment}"
   internal                   = true
   load_balancer_type         = "network"
   subnets                    = var.subnet_ids
@@ -9,7 +9,7 @@ resource "aws_lb" "alb" {
 }
 
 resource "aws_lb_target_group" "ecs_target" {
-  port        = 80
+  port        = var.port
   protocol    = "TCP"
   target_type = "ip"
   vpc_id      = var.vpc_id
@@ -17,7 +17,7 @@ resource "aws_lb_target_group" "ecs_target" {
 
 resource "aws_lb_listener" "ecs_listen" {
   load_balancer_arn = aws_lb.alb.arn
-  port              = 80
+  port              = var.port
   protocol          = "TCP"
   default_action {
     type             = "forward"

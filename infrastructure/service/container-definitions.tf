@@ -4,15 +4,15 @@ locals {
     image = "${var.ecr_url}:latest"
     portMappings = [
       {
-        hostPort      = 80
-        containerPort = 80
+        hostPort      = var.port
+        containerPort = var.port
       }
     ]
 
     environment = [
       {
-        Name  = "STAGE_NAME"
-        Value = var.stage_name
+        Name  = "ENVIRONMENT"
+        Value = var.environment
       }
     ]
 
@@ -20,13 +20,13 @@ locals {
       logDriver = "awslogs"
       options = {
         awslogs-group         = aws_cloudwatch_log_group.service.name
-        awslogs-region        = "us-west-2"
-        awslogs-stream-prefix = "ecs-test"
+        awslogs-region        = var.region
+        awslogs-stream-prefix = var.project
       }
     }
   }
 }
 
 resource "aws_cloudwatch_log_group" "service" {
-  name = "test-ecs-logs"
+  name = "${var.project}-ecs-${var.environment}"
 }
